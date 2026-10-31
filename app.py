@@ -1,5 +1,3 @@
-"""Streamlit front end for the saved Landsat land-cover classifiers."""
-
 from pathlib import Path
 
 import matplotlib
@@ -158,7 +156,11 @@ def main():
                 }
             )
         )
-        st.dataframe(report_frame.style.format("{:.3f}", subset=["Precision", "Recall", "F1"]))
+        report_frame[["Precision", "Recall", "F1"]] = report_frame[
+            ["Precision", "Recall", "F1"]
+        ].astype(float).round(3)
+        report_frame["Support"] = report_frame["Support"].astype(int)
+        st.dataframe(report_frame)
 
     st.subheader("All five models on this file")
     comparison = (
@@ -175,7 +177,7 @@ def main():
             }
         )
     )
-    st.dataframe(comparison.style.format("{:.4f}"))
+    st.dataframe(comparison.astype(float).round(4))
 
     preview = features.head(12).copy()
     preview["Actual"] = target.head(12).to_numpy()
@@ -186,3 +188,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+    

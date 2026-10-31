@@ -14,7 +14,7 @@ from sklearn.metrics import (
 
 PROJECT_DIR = Path(__file__).resolve().parent
 DATA_DIR = PROJECT_DIR / "data"
-MODEL_DIR = PROJECT_DIR / "model"
+MODEL_DIR = PROJECT_DIR / "models"
 TEST_DATA_PATH = PROJECT_DIR / "test_data.csv"
 
 BANDS = ("green", "red", "nir1", "nir2")
