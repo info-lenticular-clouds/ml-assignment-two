@@ -1,5 +1,6 @@
 from pathlib import Path
 
+import joblib
 import numpy as np
 import pandas as pd
 from sklearn.metrics import (
@@ -13,6 +14,7 @@ from sklearn.metrics import (
 
 PROJECT_DIR = Path(__file__).resolve().parent
 DATA_DIR = PROJECT_DIR / "data"
+MODEL_DIR = PROJECT_DIR / "model"
 TEST_DATA_PATH = PROJECT_DIR / "test_data.csv"
 
 BANDS = ("green", "red", "nir1", "nir2")
@@ -40,6 +42,14 @@ CLASS_MAP = {
 }
 CLASS_NAMES = list(CLASS_MAP.values())
 
+MODEL_FILES = {
+    "Logistic Regression": "logistic_regression.joblib",
+    "Decision Tree": "decision_tree.joblib",
+    "KNN": "knn.joblib",
+    "Naive Bayes": "naive_bayes.joblib",
+    "Support Vector Machine": "svm.joblib",
+}
+
 
 def read_uci_split(path):
     """Read one UCI Statlog file (36 spectral values and an integer class code)."""
@@ -52,6 +62,19 @@ def read_uci_split(path):
         unknown = sorted(frame.loc[frame[TARGET_COLUMN].isna(), "class_code"].unique())
         raise ValueError(f"Unrecognised class codes in {path}: {unknown}")
     return frame.drop(columns=["class_code"])
+
+
+def load_models(model_dir=MODEL_DIR):
+    model_dir = Path(model_dir)
+    models = {}
+    for name, filename in MODEL_FILES.items():
+        path = model_dir / filename
+        if not path.exists():
+            raise FileNotFoundError(
+                f"Missing saved model {path.name}. Run train_models.py first."
+            )
+        models[name] = joblib.load(path)
+    return models
 
 
 def _as_class_name(value):
