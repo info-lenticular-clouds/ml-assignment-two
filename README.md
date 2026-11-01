@@ -15,12 +15,12 @@ The sample comes from a Landsat scene purchased from NASA by the Australian Cent
 
 | Item | Value |
 | --- | --- |
-| Instances | 6,435 (4,435 train, 2,000 test) |
-| Features | 36 numeric spectral values, each in 0–255 |
-| Target | `land_cover` (6 classes; UCI class code 6 does not occur) |
+| Instances | 6,435 (4,435 training data, 2,000 test data) |
+| Features | 36 numeric spectral values, range in 0-255 |
+| Target | `land_cover` (6 classes; described above) |
 | Missing values | None |
 
-Each row is one 3×3 neighbourhood. Pixels are stored left to right, top to bottom. Every pixel has four bands, in this order: green, red, near-infrared 1, near-infrared 2. Columns are named `{position}_{band}`, for example `center_red`. Attributes 17–20 in the raw file are the centre pixel. The label is the cover type of that centre pixel.
+Each row is one 3x3 neighbourhood. Pixels are stored left to right, top to bottom. Every pixel has four bands, in this order: green, red, near-infrared 1, near-infrared 2. Columns are named `{position}_{band}`, for example `center_red`. Attributes 17–20 in the raw file are the centre pixel. The label is the cover type of that centre pixel.
 
 The official `sat.trn` / `sat.tst` split is used as published. The UCI documentation says not to replace that split with cross-validation, because overlapping neighbourhoods would leak spatial information into the test score. `test_data.csv` is the official test split with a header row.
 
