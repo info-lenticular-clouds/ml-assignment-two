@@ -4,7 +4,7 @@
 
 A Landsat multispectral scanner records the same patch of ground in four spectral bands. From each 3×3 neighbourhood of pixels, the task is to predict the land-cover class of the centre pixel. The six classes are red soil, cotton crop, grey soil, damp grey soil, soil with vegetation stubble, and very damp grey soil.
 
-This is a multi-class classification problem. Five models are trained on the official UCI training file and scored once on the official test file. The Streamlit app loads those saved models and scores an uploaded test CSV. It does not retrain them.
+This is a multi-class classification problem. Five models are trained on the official UCI training file and scored once on the official test file. The Streamlit app loads those saved models and scores an uploaded test CSV. It does not retrain them with the uploaded CSV file.
 
 ## b. Dataset description
 
@@ -40,7 +40,7 @@ All five models are fit on the same 4,435 training rows and scored on the same 2
 - **Naive Bayes.** Gaussian Naive Bayes on standardised features (`var_smoothing=1e-9`). Gaussian is the right variant because every feature is continuous.
 - **Support Vector Machine.** Standardised features, RBF kernel, `C=10`, `gamma="scale"`, `class_weight="balanced"`.
 
-Logistic regression, k-nearest neighbours, and the support-vector machine need standardised features because their geometry depends on feature scale. The tree does not. Naive Bayes is also given standardised features so each band contributes on a comparable scale.
+Logistic regression, k-nearest neighbours, and the support-vector machine need standardised features because their geometry depends on feature scale but the tree does not. Naive Bayes is also given standardised features so each band contributes on a comparable scale.
 
 Precision, recall, and F1 are weighted averages across the six classes. AUC is the weighted one-vs-rest area under the ROC curve. MCC is the multiclass Matthews correlation coefficient. For a single-label problem, weighted recall equals accuracy, which is why those two columns match. Precision and F1 still differ from accuracy.
 
@@ -57,11 +57,11 @@ Precision, recall, and F1 are weighted averages across the six classes. AUC is t
 | ML Model Name | Observation about model performance |
 | --- | --- |
 | Logistic Regression | A linear boundary is enough to rank the classes well (AUC 0.9786), and red soil and cotton crop are almost separated (F1 0.973 and 0.944). The grey-soil family is not linearly separable: damp grey soil falls to F1 0.571, with precision only 0.491. Overall accuracy is 0.8435. |
-| Decision Tree | Accuracy (0.8390) is close to logistic regression, but AUC is the weakest of the five (0.9372) because a leaf gives a coarse probability. The depth and leaf-size limits keep the tree from memorising neighbouring pixels. Damp grey soil is again the failure point (F1 0.552). |
+| Decision Tree | Accuracy (0.8390) is close to logistic regression, but AUC is the weakest of the five (0.9372) because a leaf gives a simplified, grouped, or less precise probability. The depth and leaf-size limits keep the tree from memorising neighbouring pixels i.e. overfitting. Damp grey soil is again the failure point (F1 0.552). |
 | KNN | Best accuracy (0.9035), F1 (0.9025), and MCC (0.8814). Spectral classes form local clusters, so a distance-weighted vote of 7 neighbours matches the structure of this data. It also has the best F1 on the hard damp-grey class (0.700). Red soil reaches F1 0.985. |
-| Naive Bayes | Lowest accuracy (0.7965) and MCC (0.7531). Gaussian Naive Bayes treats the 36 bands and neighbouring pixels as independent, and they are not. The damage shows up on soil with vegetation stubble (F1 0.652, against 0.896 for KNN). AUC stays fairly high at 0.9589, so the scores still rank classes better than the hard predictions suggest. Cotton crop remains easy (F1 0.935). |
+| Naive Bayes | Lowest accuracy (0.7965) and MCC (0.7531). Gaussian Naive Bayes treats the 36 bands and neighbouring pixels as independent but actually they are not. The damage shows up on soil with vegetation stubble (F1 0.652, against 0.896 for KNN). AUC stays fairly high at 0.9589, so the scores still rank classes better than the hard predictions suggest. Cotton crop remains easy (F1 0.935). |
 | Support Vector Machine | Closest model to KNN on the actual decisions (accuracy 0.8945, F1 0.8970, MCC 0.8721) and the best ranking score (AUC 0.9850). Balanced class weights lift damp-grey recall to 0.782, above KNN’s 0.673, but precision drops to 0.609 because the model over-calls that class. |
-| Overall, Winner for your dataset? | **KNN.** It leads on accuracy, F1, and MCC, and it is the most balanced model on damp grey soil, which is the class every model struggles with. The RBF support-vector machine is a close second and has the highest AUC. Logistic regression and the decision tree are clearly behind those two. Gaussian Naive Bayes is last because the independence assumption does not hold for a 3×3 multispectral neighbourhood. |
+| Overall, Winner for your dataset? | **KNN.** It leads on accuracy, F1, and MCC, and it is the most balanced model on damp grey soil, which is the class every model struggles with. The RBF support-vector machine is a close second and has the highest AUC. Logistic regression and the decision tree are clearly behind those two. Gaussian Naive Bayes is last because the independence assumption does not hold good for a 3×3 multispectral neighbourhood. |
 
 ## How to run
 
@@ -72,4 +72,4 @@ python train_models.py
 streamlit run app.py
 ```
 
-Training reads `data/sat.trn` and `data/sat.tst`, writes `test_data.csv`, and saves the five models under `models/`. The app scores the bundled test file immediately. Use the sidebar to switch models or upload another test CSV with the same feature columns and a `land_cover` column.
+Training done on `data/sat.trn` and evaluated on `data/sat.tst` which is copied to `test_data.csv` on root directory, and saves the five models under `models/` directory. The app scores the bundled test file immediately. Use the sidebar to switch between models or upload another test CSV with the same feature columns and a `land_cover` as target column.

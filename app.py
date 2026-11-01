@@ -67,10 +67,10 @@ def main():
 
     st.title("Landsat land-cover classification")
     st.write(
-        "Each row is a 3×3 neighbourhood from a Landsat multispectral scene. "
+        "The 5 models are trained on a 3×3 neighbourhood from a Landsat multispectral scene. "
         "The saved models predict the land cover of the centre pixel. "
-        "Upload a test CSV to score it, or leave the uploader empty to use "
-        "the bundled UCI test set. The app does not retrain the models."
+        "Please upload a test CSV to score it, or leave the uploader empty to use "
+        "the bundled UCI test set. The app does not retrain the models again with the upload CSV file."
     )
 
     with st.sidebar:
@@ -79,7 +79,7 @@ def main():
         upload = st.file_uploader(
             "Upload test CSV",
             type=["csv"],
-            help="Include the 36 spectral feature columns and the land_cover target.",
+            help="CSV should contains the 36 spectral feature columns and the land_cover as target column.",
         )
         st.markdown(
             f"**Features:** {len(FEATURE_COLUMNS)} spectral values  \n"
@@ -126,8 +126,8 @@ def main():
 
     if pd.isna(selected_metrics["auc"]):
         st.warning(
-            "AUC could not be computed. The uploaded file needs examples "
-            "from more than one land-cover class."
+            "AUC could not be computed. The uploaded file should contain examples "
+            "from more than one land-cover classes."
         )
 
     chart_column, report_column = st.columns([1.15, 1])

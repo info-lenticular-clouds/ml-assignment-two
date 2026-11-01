@@ -52,7 +52,7 @@ MODEL_FILES = {
 
 
 def read_uci_split(path):
-    """Read one UCI Statlog file (36 spectral values and an integer class code)."""
+    """Loading one UCI Statlog file (36 spectral values and an integer class code)."""
     frame = pd.read_csv(path, sep=r"\s+", header=None, engine="python")
     if frame.shape[1] != 37:
         raise ValueError(f"{path} should have 37 columns, found {frame.shape[1]}.")
