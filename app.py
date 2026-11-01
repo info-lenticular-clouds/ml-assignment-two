@@ -70,7 +70,7 @@ def main():
         "The 5 models are trained on a 3x3 neighbourhood from a Landsat multispectral scene. "
         "The saved models predict the land cover of the centre pixel. "
         "Please upload a test CSV to score it, or leave the uploader empty to use "
-        "the bundled UCI test set. The app does not retrain the models again with the upload CSV file."
+        "the bundled UCI test set. The app does not retrain the models again with the uploaded CSV file."
     )
 
     with st.sidebar:

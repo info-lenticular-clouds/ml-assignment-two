@@ -2,7 +2,7 @@
 
 ## a. Problem statement
 
-A Landsat multispectral scanner records the same patch of ground in four spectral bands. From each 3×3 neighbourhood of pixels, the task is to predict the land-cover class of the centre pixel. The six classes are red soil, cotton crop, grey soil, damp grey soil, soil with vegetation stubble, and very damp grey soil.
+A Landsat multispectral scanner records the same patch of ground in four spectral bands. From each 3x3 neighbourhood of pixels, the task is to predict the land-cover class of the centre pixel. The six classes are red soil, cotton crop, grey soil, damp grey soil, soil with vegetation stubble, and very damp grey soil.
 
 This is a multi-class classification problem. Five models are trained on the official UCI training file and scored once on the official test file. The Streamlit app loads those saved models and scores an uploaded test CSV. It does not retrain them with the uploaded CSV file.
 
@@ -16,8 +16,8 @@ The sample comes from a Landsat scene purchased from NASA by the Australian Cent
 | Item | Value |
 | --- | --- |
 | Instances | 6,435 (4,435 training data, 2,000 test data) |
-| Features | 36 numeric spectral values, range in 0-255 |
-| Target | `land_cover` (6 classes; described above) |
+| Features | 36 numeric spectral values, in the range 0-255 |
+| Target | `land_cover` (6 classes and the mixture class (all types present) missing in the given dataset) |
 | Missing values | None |
 
 Each row is one 3x3 neighbourhood. Pixels are stored left to right, top to bottom. Every pixel has four bands, in this order: green, red, near-infrared 1, near-infrared 2. Columns are named `{position}_{band}`, for example `center_red`. Attributes 17–20 in the raw file are the centre pixel. The label is the cover type of that centre pixel.
@@ -61,7 +61,7 @@ Precision, recall, and F1 are weighted averages across the six classes. AUC is t
 | KNN | Best accuracy (0.9035), F1 (0.9025), and MCC (0.8814). Spectral classes form local clusters, so a distance-weighted vote of 7 neighbours matches the structure of this data. It also has the best F1 on the hard damp-grey class (0.700). Red soil reaches F1 0.985. |
 | Naive Bayes | Lowest accuracy (0.7965) and MCC (0.7531). Gaussian Naive Bayes treats the 36 bands and neighbouring pixels as independent but actually they are not. The damage shows up on soil with vegetation stubble (F1 0.652, against 0.896 for KNN). AUC stays fairly high at 0.9589, so the scores still rank classes better than the hard predictions suggest. Cotton crop remains easy (F1 0.935). |
 | Support Vector Machine | Closest model to KNN on the actual decisions (accuracy 0.8945, F1 0.8970, MCC 0.8721) and the best ranking score (AUC 0.9850). Balanced class weights lift damp-grey recall to 0.782, above KNN’s 0.673, but precision drops to 0.609 because the model over-calls that class. |
-| Overall, Winner for your dataset? | **KNN.** It leads on accuracy, F1, and MCC, and it is the most balanced model on damp grey soil, which is the class every model struggles with. The RBF support-vector machine is a close second and has the highest AUC. Logistic regression and the decision tree are clearly behind those two. Gaussian Naive Bayes is last because the independence assumption does not hold good for a 3×3 multispectral neighbourhood. |
+| Overall, Winner for the UCI dataset? | **KNN.** It leads on accuracy, F1, and MCC, and it is the most balanced model on damp grey soil, which is the class every model struggles with. The RBF support-vector machine is a close second and has the highest AUC. Logistic regression and the decision tree are clearly behind those two. Gaussian Naive Bayes is last because the independence assumption does not hold good for a 3×3 multispectral neighbourhood. |
 
 ## How to run
 
